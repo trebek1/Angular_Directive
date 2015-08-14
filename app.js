@@ -3,10 +3,16 @@ angular.module('app', [])
   return {
     restrict: 'E',
     transclude: true,
-    template: '<h2>Hello world!</h2> <div role="tabpanel" ng-transclude></div>',
+    template: '<div role="tabpanel" ng-show="active" ng-transclude></div>',
     require: '^tabset',
-    scope: { },
-    link: function(scope, elem, attr, tabsetCtrl) {}
+    scope: { 
+    	heading: '@'
+    },
+    link: function(scope, elem, attr, tabsetCtrl) {
+    	scope.active = false
+    	tabsetCtrl.addTab(scope)
+
+    }
   }
 })
 
@@ -20,7 +26,21 @@ angular.module('app', [])
     controllerAs: 'tabset',
     controller: function() {
       var self = this
+      self.select = function(selectedTab){
+      	angular.forEach(self.tabs, function(tab){
+      		if(tab.active && tab!==selectedTab){
+      			tab.active = false 
+      		}
+      	})
+      	selectedTab.active = true 
+      }
       self.tabs = []
+      self.addTab = function addTab(tab){
+      	self.tabs.push(tab)
+      	if(self.tabs.length === 1){
+      		tab.active = true
+      	}
+      }
     }
   }
 })
